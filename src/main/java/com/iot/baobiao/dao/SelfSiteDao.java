@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,10 @@ import java.util.Map;
 public class SelfSiteDao {
 
     private static final int PAGENUM = 1000;
+
+    //用于java.util.Date和MySQL datetime数据类型的转换
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
     private String getOffset(String sql, int page) {
         return sql + " LIMIT " + PAGENUM * page + " , " + PAGENUM;
@@ -60,7 +65,7 @@ public class SelfSiteDao {
     public List<SelfSite> findByUrlAndTime(List<String> domains, Date fromTime, int page) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("domains", domains);
-        parameters.addValue("fromtime", fromTime);
+        parameters.addValue("fromtime", sdf.format(fromTime));
         String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) AND fetch_time > :fromtime " +
                 " ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
@@ -73,7 +78,7 @@ public class SelfSiteDao {
         for (int i = 0; i < words.size(); i++) {
             if (i == 0) sqlStr += " AND ";
             sqlStr += (" name LIKE :word" + i + " ");
-            if (i != (words.size()-1)) sqlStr += " OR ";
+            if (i != (words.size() - 1)) sqlStr += " OR ";
             parameters.addValue("word" + i, "%" + words.get(i) + "%");
         }
         sqlStr += " ORDER BY fetch_time DESC";
@@ -83,15 +88,15 @@ public class SelfSiteDao {
     public List<SelfSite> findByUrlAndWordAndTime(List<String> domains, Date fromTime, List<String> words, int page) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
         parameters.addValue("domains", domains);
-        parameters.addValue("fromtime", fromTime);
+        parameters.addValue("fromtime", sdf.format(fromTime));
         String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ";
         for (int i = 0; i < words.size(); i++) {
             if (i == 0) sqlStr += " AND ";
             sqlStr += (" name LIKE :word" + i + " ");
-            if (i != (words.size()-1)) sqlStr += " OR ";
+            if (i != (words.size() - 1)) sqlStr += " OR ";
             parameters.addValue("word" + i, "%" + words.get(i) + "%");
         }
-        sqlStr += " ORDER BY fetch_time DESC";
+        sqlStr += " AND fetch_time > :fromtime ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
     }
 }

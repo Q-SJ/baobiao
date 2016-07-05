@@ -100,7 +100,10 @@ public class SiteController {
         System.out.println(str);
 
         List<String> domains = (List<String>) session.getAttribute("domains");
-        if (domains == null) querySite(user_id, session);
+        if (domains == null) {
+            querySite(user_id, session);
+            domains = (List<String>) session.getAttribute("domains");
+        }
         List<String> wordList = null;
         if (words != null) {
             wordList = Arrays.asList(words.split(","));
@@ -108,6 +111,5 @@ public class SiteController {
         Long timestamp = fromTime == null ? -1 : Long.parseLong(fromTime);
         Date time = timestamp == -1 ? null : new Date(timestamp);
         return dataService.fetchData(domains, time, wordList, page);
-
     }
 }
