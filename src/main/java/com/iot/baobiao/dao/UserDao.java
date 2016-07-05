@@ -25,7 +25,7 @@ public class UserDao {
 
     private static final String SELECT_BY_USERNAME = " SELECT * FROM user WHERE username = ?";
     private static final String SELECT_BY_PHONENUM = " SELECT * FROM user WHERE phonenum = ?";
-    private static final String SELECT_SITE_BY_USERID = " SELECT site FROM user WHERE id = ?";
+    private static final String SELECT_SITE_BY_USERID = " SELECT sites FROM user WHERE id = ?";
     private static final String UPDATE_SITE = "UPDATE user SET site = ? WHERE id = ?";
     private static final String UPDATE_USER = "UPDATE user SET username = ?, email = ?, corporation = ?, industry = ? WHERE id = ?";
 
@@ -44,7 +44,7 @@ public class UserDao {
                     resultSet.getString("email"),
                     resultSet.getString("corporation"),
                     resultSet.getInt("industry"),
-                    resultSet.getString("site")
+                    resultSet.getString("sites")
             );
         }
     }

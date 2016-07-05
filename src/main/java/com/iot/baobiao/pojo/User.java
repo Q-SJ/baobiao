@@ -37,6 +37,7 @@ public class User {
         this.email = email;
         this.corporation = corporation;
         this.industry = industry;
+        this.sites = sites;
     }
 
     public int getId() {
