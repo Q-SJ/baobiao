@@ -25,7 +25,7 @@
           <map>
             <entry key="com.zeroturnaround.jrebel.FormatVersion" value="6.3.2" />
             <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerPreviousEnabledSelection" value="instance" />
-            <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerSelection" value="instance" />
+            <entry key="com.zeroturnaround.jrebel.remoting.ModuleRemoteServerSelection" value="off" />
           </map>
         </option>
         <option name="manualXML" value="false" />
@@ -48,21 +48,21 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="Tomcat 8" level="application_server_libraries" />
+    <orderEntry type="library" scope="PROVIDED" name="Tomcat 9.0.0.M8" level="application_server_libraries" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aop:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:4.3.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-web:4.3.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-core:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-orm:4.3.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-aspects:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.aspectj:aspectjweaver:1.8.9" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-test:4.3.0.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:4.3.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.38" level="project" />
     <orderEntry type="library" name="Maven: commons-dbcp:commons-dbcp:1.4" level="project" />
     <orderEntry type="library" name="Maven: commons-pool:commons-pool:1.5.4" level="project" />

@@ -135,18 +135,10 @@
             <version>${shiro.version}</version>
         </dependency>
 
-
     </dependencies>
 
 
     <build>
         <finalName>baobiao</finalName>
-            <plugins>
-                <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
-                    <version>9.4.0.M0</version>
-                </plugin>
-            </plugins>
     </build>
 </project>

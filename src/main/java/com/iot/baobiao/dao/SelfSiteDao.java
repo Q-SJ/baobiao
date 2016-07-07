@@ -76,12 +76,12 @@ public class SelfSiteDao {
         parameters.addValue("domains", domains);
         String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ";
         for (int i = 0; i < words.size(); i++) {
-            if (i == 0) sqlStr += " AND ";
+            if (i == 0) sqlStr += " AND (";
             sqlStr += (" name LIKE :word" + i + " ");
             if (i != (words.size() - 1)) sqlStr += " OR ";
             parameters.addValue("word" + i, "%" + words.get(i) + "%");
         }
-        sqlStr += " ORDER BY fetch_time DESC";
+        sqlStr += " ) ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
     }
 
@@ -91,12 +91,12 @@ public class SelfSiteDao {
         parameters.addValue("fromtime", sdf.format(fromTime));
         String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ";
         for (int i = 0; i < words.size(); i++) {
-            if (i == 0) sqlStr += " AND ";
+            if (i == 0) sqlStr += " AND (";
             sqlStr += (" name LIKE :word" + i + " ");
             if (i != (words.size() - 1)) sqlStr += " OR ";
             parameters.addValue("word" + i, "%" + words.get(i) + "%");
         }
-        sqlStr += " AND fetch_time > :fromtime ORDER BY fetch_time DESC";
+        sqlStr += " ) AND fetch_time > :fromtime ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
     }
 }
