@@ -10,10 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ja on 2016/6/22.
@@ -30,6 +27,15 @@ public class SelfSiteDao {
 
     private String getOffset(String sql, int page) {
         return sql + " LIMIT " + PAGENUM * page + " , " + PAGENUM;
+    }
+
+    private List<Integer> stringToIntList(String ids) {
+        List<String> sitesID = Arrays.asList(ids.split(",", 0));
+        List<Integer> idList = new ArrayList<Integer>();
+        for (String siteID : sitesID) {
+            idList.add(Integer.parseInt(siteID));
+        }
+        return idList;
     }
 
     @Autowired
@@ -50,31 +56,34 @@ public class SelfSiteDao {
                     resultSet.getDate("date_value"),
                     resultSet.getDouble("num_value"),
                     resultSet.getString("server_num"),
-                    resultSet.getString("domain")
+                    resultSet.getString("domain"),
+                    resultSet.getInt("url_id")
             );
         }
     }
 
-    public List<SelfSite> findByUrl(List<String> domains, int page) {
+    public List<SelfSite> findByUrl(String ids, int page) {
+        //ids即为用户表中的sites字段，注意最后面有一个逗号
+
         Map<String, Object> paramMap = new HashMap<String, Object>();
-        paramMap.put("domains", domains);
-        String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ORDER BY fetch_time DESC";
+        paramMap.put("ids", stringToIntList(ids));
+        String sqlStr = "SELECT * FROM self_site WHERE url_id IN (:ids) ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), paramMap, new SelfSiteRowMapper());
     }
 
-    public List<SelfSite> findByUrlAndTime(List<String> domains, Date fromTime, int page) {
+    public List<SelfSite> findByUrlAndTime(String ids, Date fromTime, int page) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("domains", domains);
+        parameters.addValue("ids", stringToIntList(ids));
         parameters.addValue("fromtime", sdf.format(fromTime));
-        String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) AND fetch_time > :fromtime " +
+        String sqlStr = "SELECT * FROM self_site WHERE url_id IN (:ids) AND fetch_time > :fromtime " +
                 " ORDER BY fetch_time DESC";
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
     }
 
-    public List<SelfSite> findByUrlAndWord(List<String> domains, List<String> words, int page) {
+    public List<SelfSite> findByUrlAndWord(String ids, List<String> words, int page) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("domains", domains);
-        String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ";
+        parameters.addValue("ids", stringToIntList(ids));
+        String sqlStr = "SELECT * FROM self_site WHERE url_id IN (:ids) ";
         for (int i = 0; i < words.size(); i++) {
             if (i == 0) sqlStr += " AND (";
             sqlStr += (" name LIKE :word" + i + " ");
@@ -85,11 +94,11 @@ public class SelfSiteDao {
         return namedParameterJdbcTemplate.query(getOffset(sqlStr, page), parameters, new SelfSiteRowMapper());
     }
 
-    public List<SelfSite> findByUrlAndWordAndTime(List<String> domains, Date fromTime, List<String> words, int page) {
+    public List<SelfSite> findByUrlAndWordAndTime(String ids, Date fromTime, List<String> words, int page) {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        parameters.addValue("domains", domains);
+        parameters.addValue("ids", stringToIntList(ids));
         parameters.addValue("fromtime", sdf.format(fromTime));
-        String sqlStr = "SELECT * FROM self_site WHERE domain IN (:domains) ";
+        String sqlStr = "SELECT * FROM self_site WHERE url_id IN (:ids) ";
         for (int i = 0; i < words.size(); i++) {
             if (i == 0) sqlStr += " AND (";
             sqlStr += (" name LIKE :word" + i + " ");

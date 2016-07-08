@@ -18,11 +18,12 @@ public class SelfSite {
     private double num_value;
     private String server_num;
     private String domain;
+    private int url_id;
 
     public SelfSite() {
     }
 
-    public SelfSite(String url, String code, String name, String category, int order_index, Date fetch_time, String text_value, String html_value, Date date_value, double num_value, String server_num, String domain) {
+    public SelfSite(String url, String code, String name, String category, int order_index, Date fetch_time, String text_value, String html_value, Date date_value, double num_value, String server_num, String domain, int url_id) {
         this.url = url;
         this.code = code;
         this.name = name;
@@ -35,6 +36,7 @@ public class SelfSite {
         this.num_value = num_value;
         this.server_num = server_num;
         this.domain = domain;
+        this.url_id = url_id;
     }
 
     public String getUrl() {
@@ -135,5 +137,13 @@ public class SelfSite {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public int getUrl_id() {
+        return url_id;
+    }
+
+    public void setUrl_id(int url_id) {
+        this.url_id = url_id;
     }
 }

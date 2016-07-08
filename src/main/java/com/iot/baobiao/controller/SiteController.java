@@ -44,17 +44,10 @@ public class SiteController {
             map.put("message", "输入的网址错误！");
             return map;
         }
+
         manageSiteService.addUserSite(user_id, site);
         map.put("status", "ok");
         map.put("site_id", site.getId());
-
-        List<String> domains = (List<String>) session.getAttribute("domains");
-        if (domains != null) {
-            domains.add(site.getDomain());
-            System.out.println("After add");
-            System.out.println((List<String>) session.getAttribute("domains"));
-        }
-
         return map;
     }
 
@@ -62,17 +55,10 @@ public class SiteController {
     public Map<String, String> deleteSite(@PathVariable int user_id, @RequestParam int site_id, @RequestParam String domain, HttpSession session) {
         String str = String.format("/{%d}/delete", user_id);
         System.out.println(str);
+
         Map<String, String> map = new HashMap<String, String>();
         manageSiteService.deleteUserSite(user_id, site_id);
         map.put("status", "ok");
-
-        List<String> domains = (List<String>) session.getAttribute("domains");
-        if (domains !=null) {
-            domains.remove(domain);
-            System.out.println("After delete");
-            System.out.println((List<String>) session.getAttribute("domains"));
-        }
-
         return map;
     }
 
@@ -80,16 +66,8 @@ public class SiteController {
     public List<Site> querySite(@PathVariable int user_id, HttpSession session) {
         String str = String.format("/{%d}/query", user_id);
         System.out.println(str);
+
         List<Site> siteList = manageSiteService.queryUserSite(user_id);
-
-        List<String> domains = new ArrayList<String>();
-        for (Site site : siteList) {
-            domains.add(site.getDomain());
-        }
-        session.setAttribute("domains", domains);
-        System.out.println("After query");
-        System.out.println((List<String>) session.getAttribute("domains"));
-
         return siteList;
     }
 
@@ -99,17 +77,13 @@ public class SiteController {
         String str = String.format("/{%d}/data", user_id);
         System.out.println(str);
 
-        List<String> domains = (List<String>) session.getAttribute("domains");
-        if (domains == null) {
-            querySite(user_id, session);
-            domains = (List<String>) session.getAttribute("domains");
-        }
+        String ids = manageSiteService.queryUserSiteIDS(user_id);
         List<String> wordList = null;
         if (words != null) {
             wordList = Arrays.asList(words.split(","));
         }
         Long timestamp = fromTime == null ? -1 : Long.parseLong(fromTime);
         Date time = timestamp == -1 ? null : new Date(timestamp);
-        return dataService.fetchData(domains, time, wordList, page);
+        return dataService.fetchData(ids, time, wordList, page);
     }
 }

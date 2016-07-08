@@ -30,11 +30,10 @@ public class UserController {
         return map;
     }
 
-    @RequestMapping("/test")
+    @RequestMapping("/test1")
     public Map<String, Object> test() {
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("status", "ok");
         return map;
     }
-
 }

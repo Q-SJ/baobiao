@@ -5,6 +5,7 @@ import com.iot.baobiao.dao.UserDao;
 import com.iot.baobiao.exception.SiteNotFoundException;
 import com.iot.baobiao.pojo.Site;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringArrayPropertyEditor;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
@@ -51,7 +52,7 @@ public class ManageSiteService {
         userDao.deleteSite(user_id, site_id);
     }
 
-    //查询用户的自选网站
+    //查询用户的自选网站，以列表的形式返回网站具体内容以展示给用户
     public List<Site> queryUserSite(int user_id) {
         //先通过用户id查找出用户添加的网站的id串，再通过这个网站的id串查找对应的网站名称
         try {
@@ -63,5 +64,15 @@ public class ManageSiteService {
         } catch (EmptyResultDataAccessException e) {
             throw new SiteNotFoundException();
         }
+    }
+
+
+    //查询用户的自选网站，返回一个网站的id串以便查找数据
+    public String queryUserSiteIDS(int user_id) {
+        String siteids = userDao.findSiteByUserID(user_id);
+        if (siteids == null || siteids.equals("")) {
+            throw new SiteNotFoundException();
+        }
+        return siteids;
     }
 }

@@ -20,14 +20,14 @@ public class DataService {
     @Autowired
     private SelfSiteDao selfSiteDao;
 
-    public List<SelfSite> fetchData(List<String> urls, Date fromTime, List<String> words, int page) {
+    public List<SelfSite> fetchData(String ids, Date fromTime, List<String> words, int page) {
        try {
            if (fromTime == null) {
-               if (words == null) return selfSiteDao.findByUrl(urls, page);
-               else return selfSiteDao.findByUrlAndWord(urls, words, page);
+               if (words == null) return selfSiteDao.findByUrl(ids, page);
+               else return selfSiteDao.findByUrlAndWord(ids, words, page);
            } else {
-               if (words == null) return selfSiteDao.findByUrlAndTime(urls, fromTime, page);
-               else return selfSiteDao.findByUrlAndWordAndTime(urls, fromTime, words, page);
+               if (words == null) return selfSiteDao.findByUrlAndTime(ids, fromTime, page);
+               else return selfSiteDao.findByUrlAndWordAndTime(ids, fromTime, words, page);
            }
        } catch (EmptyResultDataAccessException e) {
            throw new NoDataException();
