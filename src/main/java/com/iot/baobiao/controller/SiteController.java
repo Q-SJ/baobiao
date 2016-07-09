@@ -30,7 +30,7 @@ public class SiteController {
     private DataService dataService;
 
     @RequestMapping("/{user_id}/add")
-    public Map<String, Object> addSite(@PathVariable int user_id, @RequestParam String url, @RequestParam(required = false) String sitename, HttpSession session) {
+    public Map<String, Object> addSite(@PathVariable int user_id, @RequestParam String url, @RequestParam(required = false) String sitename) {
         String str = String.format("/{%d}/add", user_id);
         System.out.println(str);
         Map<String, Object> map = new HashMap<String, Object>();
@@ -52,7 +52,7 @@ public class SiteController {
     }
 
     @RequestMapping("/{user_id}/delete")
-    public Map<String, String> deleteSite(@PathVariable int user_id, @RequestParam int site_id, @RequestParam String domain, HttpSession session) {
+    public Map<String, String> deleteSite(@PathVariable int user_id, @RequestParam int site_id) {
         String str = String.format("/{%d}/delete", user_id);
         System.out.println(str);
 
@@ -63,7 +63,7 @@ public class SiteController {
     }
 
     @RequestMapping("/{user_id}/query")
-    public List<Site> querySite(@PathVariable int user_id, HttpSession session) {
+    public List<Site> querySite(@PathVariable int user_id) {
         String str = String.format("/{%d}/query", user_id);
         System.out.println(str);
 
@@ -73,7 +73,7 @@ public class SiteController {
 
     @RequestMapping("/{user_id}/data")
     public List<SelfSite> fetchData(@PathVariable int user_id, @RequestParam int page, @RequestParam(required = false) String fromTime,
-                                    @RequestParam(required = false) String words, HttpSession session) {
+                                    @RequestParam(required = false) String words) {
         String str = String.format("/{%d}/data", user_id);
         System.out.println(str);
 

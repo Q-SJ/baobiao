@@ -26,7 +26,7 @@ public class UserDao {
     private static final String SELECT_BY_USERNAME = " SELECT * FROM user WHERE username = ?";
     private static final String SELECT_BY_PHONENUM = " SELECT * FROM user WHERE phonenum = ?";
     private static final String SELECT_SITE_BY_USERID = " SELECT sites FROM user WHERE id = ?";
-    private static final String UPDATE_SITE = "UPDATE user SET site = ? WHERE id = ?";
+    private static final String UPDATE_SITE = "UPDATE user SET sites = ? WHERE id = ?";
     private static final String UPDATE_USER = "UPDATE user SET username = ?, email = ?, corporation = ?, industry = ? WHERE id = ?";
 
     @Autowired
@@ -68,6 +68,7 @@ public class UserDao {
     @CacheEvict(value = "userCache", key = "#user_id")
     public void addSite(final int user_id, final int site_id) {
         String sites = findSiteByUserID(user_id);
+        if (sites == null) sites = "";
         List<String> siteList = Arrays.asList(sites.split(",", 0));
 
         //如果用户已经添加过此网站，则抛出重复添加网站的异常
