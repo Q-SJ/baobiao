@@ -2,6 +2,7 @@ package com.iot.baobiao.dao;
 
 import com.iot.baobiao.pojo.Site;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,6 +72,7 @@ public class SiteDao {
     }
 
     @CachePut(value = "siteCache", key = "#result.id")
+    @CacheEvict(value = "siteCache", key = "#site.domain")
     public Site insertSite(final Site site) {
         KeyHolder key = new GeneratedKeyHolder();
         jdbcTemplate.update(new PreparedStatementCreator() {
