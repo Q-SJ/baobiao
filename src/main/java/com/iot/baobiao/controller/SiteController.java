@@ -63,12 +63,13 @@ public class SiteController {
     }
 
     @RequestMapping("/{user_id}/query")
-    public List<Site> querySite(@PathVariable int user_id) {
+    public Map<String, Object> querySite(@PathVariable int user_id) {
         String str = String.format("/{%d}/query", user_id);
         System.out.println(str);
 
-        List<Site> siteList = manageSiteService.queryUserSite(user_id);
-        return siteList;
+        Map<String, Object> sites = manageSiteService.queryUserSite(user_id);
+
+        return sites;
     }
 
     @RequestMapping("/{user_id}/data")
