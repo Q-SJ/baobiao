@@ -33,4 +33,18 @@ public class DataService {
            throw new NoDataException();
        }
     }
+
+    public List<SelfSite> fetchNonData(String ids, Date fromTime, List<String> words, int page) {
+        try {
+            if (fromTime == null) {
+                if (words == null) return selfSiteDao.findByUrlNon(ids, page);
+                else return selfSiteDao.findByUrlAndWordNon(ids, words, page);
+            } else {
+                if (words == null) return selfSiteDao.findByUrlAndTimeNon(ids, fromTime, page);
+                else return selfSiteDao.findByUrlAndWordAndTimeNon(ids, fromTime, words, page);
+            }
+        } catch (EmptyResultDataAccessException e) {
+            throw new NoDataException();
+        }
+    }
 }

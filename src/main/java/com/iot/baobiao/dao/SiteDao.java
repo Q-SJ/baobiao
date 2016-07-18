@@ -30,6 +30,7 @@ public class SiteDao {
     private static final String SELECT_BY_DOMAIN = "SELECT * FROM site WHERE domain = ?";
     private static final String INSERT = "INSERT INTO site(domain, start_url, sitename) VALUES(?, ?, ?)";
     private static final String SELECT_BY_IDS = "SELECT * FROM site WHERE id IN (:ids)";
+    private static final String SELECT_ALL = "SELECT domain FROM site";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -86,5 +87,9 @@ public class SiteDao {
         }, key);
         site.setId(key.getKey().intValue());
         return site;
+    }
+
+    public List<String> findAllSite() {
+        return jdbcTemplate.queryForList(SELECT_ALL, String.class);
     }
 }

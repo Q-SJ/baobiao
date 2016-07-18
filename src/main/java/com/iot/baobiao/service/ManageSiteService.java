@@ -88,4 +88,9 @@ public class ManageSiteService {
         }
         return siteids;
     }
+
+    //返回数据库中所有的Domain List，以便客户端进行自动补齐
+    public List<String> queryDomainList() {
+        return siteDao.findAllSite();
+    }
 }

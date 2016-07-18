@@ -5,6 +5,7 @@ import com.iot.baobiao.pojo.Site;
 import com.iot.baobiao.service.DataService;
 import com.iot.baobiao.service.ManageSiteService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,5 +87,26 @@ public class SiteController {
         Long timestamp = fromTime == null ? -1 : Long.parseLong(fromTime);
         Date time = timestamp == -1 ? null : new Date(timestamp);
         return dataService.fetchData(ids, time, wordList, page);
+    }
+
+    @RequestMapping("/{user_id}/non_data")
+    public List<SelfSite> fetchNonData(@PathVariable int user_id, @RequestParam int page, @RequestParam(required = false) String fromTime,
+                                    @RequestParam(required = false) String words) {
+        String str = String.format("/{%d}/data", user_id);
+        System.out.println(str);
+
+        String ids = manageSiteService.queryUserSiteIDS(user_id);
+        List<String> wordList = null;
+        if (words != null) {
+            wordList = Arrays.asList(words.split(","));
+        }
+        Long timestamp = fromTime == null ? -1 : Long.parseLong(fromTime);
+        Date time = timestamp == -1 ? null : new Date(timestamp);
+        return dataService.fetchNonData(ids, time, wordList, page);
+    }
+
+    @RequestMapping("/domains")
+    public List<String> fetchDomainList() {
+        return manageSiteService.queryDomainList();
     }
 }
