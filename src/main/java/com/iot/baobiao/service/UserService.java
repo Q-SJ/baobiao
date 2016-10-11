@@ -18,4 +18,10 @@ public class UserService {
     public void updateUserInfo(User user) {
         userDao.updateInfo(user);
     }
+
+    public void modifyKeyword(User user) {
+        userDao.modifyKeyword(user);
+    }
+
+    public String keyword(int user_id) {return userDao.getKeyword(user_id);}
 }

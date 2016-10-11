@@ -12,6 +12,9 @@ public class User {
     private String corporation;
     private int industry;
     private String sites;
+    private String keyword;
+
+
 
     public User() {
     }
@@ -38,6 +41,23 @@ public class User {
         this.corporation = corporation;
         this.industry = industry;
         this.sites = sites;
+    }
+
+    public User(int id, String phonenum, String username, String password, String email, String corporation, int industry, String sites, String keyword) {
+        this.id = id;
+        this.phonenum = phonenum;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.corporation = corporation;
+        this.industry = industry;
+        this.sites = sites;
+        this.keyword = keyword;
+    }
+
+    public User(int user_id, String keyword) {
+        this.id = user_id;
+        this.keyword = keyword;
     }
 
     public int getId() {
@@ -102,5 +122,13 @@ public class User {
 
     public void setSites(String sites) {
         this.sites = sites;
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 }

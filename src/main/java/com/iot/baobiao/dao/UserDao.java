@@ -26,11 +26,14 @@ public class UserDao {
     private static final String SELECT_BY_USERNAME = " SELECT * FROM user WHERE username = ?";
     private static final String SELECT_BY_PHONENUM = " SELECT * FROM user WHERE phonenum = ?";
     private static final String SELECT_SITE_BY_USERID = " SELECT sites FROM user WHERE id = ?";
+    private static final String SELECT_KEYWORDS = "SELECT keyword FROM user WHERE id = ?";
     private static final String UPDATE_SITE = "UPDATE user SET sites = ? WHERE id = ?";
     private static final String UPDATE_USER = "UPDATE user SET username = ?, email = ?, corporation = ?, industry = ? WHERE id = ?";
+    private static final String UPDATE_KEYWORD = "UPDATE user SET keyword = ? WHERE id = ?";
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
 
     //将数据库查询结果集与User对象进行映射
     private static final class UserRowMapper implements RowMapper<User> {
@@ -44,9 +47,14 @@ public class UserDao {
                     resultSet.getString("email"),
                     resultSet.getString("corporation"),
                     resultSet.getInt("industry"),
-                    resultSet.getString("sites")
+                    resultSet.getString("sites"),
+                    resultSet.getString("keyword")
             );
         }
+    }
+
+    public String getKeyword(int user_id) {
+        return jdbcTemplate.queryForObject(SELECT_KEYWORDS, String.class, user_id);
     }
 
     @CacheEvict(value = "userCache", key = "#user.id")
@@ -62,6 +70,12 @@ public class UserDao {
     @Cacheable("userCache")
     public String findSiteByUserID(final int id) {
         return jdbcTemplate.queryForObject(SELECT_SITE_BY_USERID, String.class, id);
+    }
+
+    //修改用户的关键字
+    @CacheEvict(value = "userCache", key = "#user.id")
+    public void modifyKeyword(User user) {
+        jdbcTemplate.update(UPDATE_KEYWORD, user.getKeyword(), user.getId());
     }
 
     //增加用户选择的网站

@@ -34,7 +34,7 @@ public class RootConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    //配置MySQL数据源
+    //配置MySQL数据源，此为DBCP数据源连接池
     @Bean
     public BasicDataSource dataSourceTarget() {
         BasicDataSource dataSource = new BasicDataSource();
@@ -48,6 +48,8 @@ public class RootConfig {
 //        dataSource.setPassword("${jdbc.password}");
         dataSource.setMaxActive(30);
         dataSource.setMaxIdle(5);
+        dataSource.setTestOnBorrow(true);
+        dataSource.setValidationQuery("select 1");
         return dataSource;
     }
 

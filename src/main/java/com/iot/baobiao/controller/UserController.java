@@ -30,6 +30,23 @@ public class UserController {
         return map;
     }
 
+    //修改用户的关键字
+    @RequestMapping("/keyword")
+    public Map<String, Object> modifyKeyword(@RequestParam int user_id, @RequestParam String keyword) {
+        User user = new User(user_id, keyword);
+        userService.modifyKeyword(user);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("status", "ok");
+        return map;
+    }
+
+    @RequestMapping("/getKeywords")
+    public Map<String, String> keyword(@RequestParam int user_id) {
+        Map<String, String> map =  new HashMap<String, String>();
+        map.put("keywords", userService.keyword(user_id));
+        return map;
+    }
+
     @RequestMapping("/test1")
     public Map<String, Object> test() {
         Map<String, Object> map = new HashMap<String, Object>();
