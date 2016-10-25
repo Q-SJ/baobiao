@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.DoubleRange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -51,6 +52,9 @@ public class PayController {
 
     @Autowired
     BaobiaoOrderService baobiaoOrderService;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     private static final String CHARSET = "UTF-8";
 //    private static final String APP_ID = "2016083101827293";
@@ -98,7 +102,7 @@ public class PayController {
 //
 //    AlipayTradePrecreateRequest request = new AlipayTradePrecreateRequest();
 
-    private static Log log = LogFactory.getLog(Main.class);
+    private static Log log = LogFactory.getLog(PayController.class);
 
     private static final String TIMEOUT = "30m";
 
@@ -260,18 +264,9 @@ public class PayController {
         AlipayF2FPrecreateResult result = tradeService.tradePrecreate(builder);
         switch (result.getTradeStatus()) {
             case SUCCESS:
-                log.info("支付宝预下单成功: )");
-                System.out.println("支付宝预下单成功: )");
+                log.info(outTradeNo + "号订单预下单成功!");
 
                 AlipayTradePrecreateResponse response = result.getResponse();
-//                dumpResponse(response);
-//                System.out.println(response.getBody());
-
-//                // 需要修改为运行机器上的路径
-//                String filePath = String.format("/Users/liuyangkly/qr-%s.png", response.getOutTradeNo());
-//                log.info("filePath:" + filePath);
-//                ZxingUtils.getQRCodeImge(response.getQrCode(), 256, filePath);
-//                System.out.println(response.getQrCode());
 
                 BaobiaoOrder order = new BaobiaoOrder(userid, outTradeNo, "", Double.parseDouble(amount), new Date(), 1);
                 baobiaoOrderService.insertOrder(order);
@@ -284,18 +279,14 @@ public class PayController {
 
             case FAILED:
                 log.error("支付宝预下单失败!!!");
-                System.out.println("支付宝预下单失败!!!");
-                System.out.println(result.getResponse().getBody());
                 break;
 
             case UNKNOWN:
                 log.error("系统异常，预下单状态未知!!!");
-                System.out.println("系统异常，预下单状态未知!!!");
                 break;
 
             default:
                 log.error("不支持的交易状态，交易返回异常!!!");
-                System.out.println("不支持的交易状态，交易返回异常!!!");
                 break;
         }
         map.put("status", "false");
@@ -305,7 +296,7 @@ public class PayController {
 
     @RequestMapping(value = "/pay/notify", method = RequestMethod.POST)
     public String notifyResult(HttpServletRequest request, HttpServletResponse response) {
-        log.info("收到支付宝异步通知！");
+        log.debug("收到支付宝异步通知！");
         Map<String, String> params = new HashMap<String, String>();
 
         Enumeration<String> parameterNames = request.getParameterNames();
@@ -320,11 +311,12 @@ public class PayController {
             e.printStackTrace();
             return "failed";
         }
+        log.debug("验证签名成功！");
         if (signVerified) {
             String outtradeno = params.get("out_trade_no");
-            log.info(outtradeno + "号订单回调通知。");
+            log.info(outtradeno + "号订单收到支付宝异步通知。");
 //            System.out.println("验证签名成功！");
-            log.info("验证签名成功！");
+
 
             //若参数中的appid和填入的appid不相同，则为异常通知
             if (!Configs.getAppid().equals(params.get("app_id"))) {
@@ -355,31 +347,17 @@ public class PayController {
             } else {
                 baobiaoOrderService.modifyTradeStatus(BaobiaoOrder.UNKNOWN_STATE, outtradeno);
             }
-            log.info(outtradeno + "订单的状态已经修改为" + status);
+            log.info(outtradeno + "订单的状态已经修改为" + status + "。");
+            rabbitTemplate.convertAndSend("pay-success-exchange","pay-success", baobiaoOrderService.findOrderByOuttradeno(outtradeno));
         } else { //如果验证签名没有通过
             return "failed";
         }
         return "success";
     }
 
-
-
-//    @RequestMapping(value = "/pay/pay", method = RequestMethod.POST)
-//    public void pay() {
-//        AlipayOpenPublicTemplateMessageIndustryModifyRequest request = new AlipayOpenPublicTemplateMessageIndustryModifyRequest();
-////SDK已经封装掉了公共参数，这里只需要传入业务参数
-////此次只是参数展示，未进行字符串转义，实际情况下请转义
-//        request.setBizContent("{" +
-//                "     \"primary_industry_name\":\"IT科技/IT软件与服务\"," +
-//                "     \"primary_industry_code\":\"10001/20102\"," +
-//                "     \"secondary_industry_code\":\"10001/20102\"," +
-//                "     \"secondary_industry_name\":\"IT科技/IT软件与服务\"," +
-//                "   }");
-//        try {
-//            AlipayOpenPublicTemplateMessageIndustryModifyResponse response = alipayClient.execute(request);
-//            System.out.println(response.getBody());
-//        } catch (AlipayApiException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    @RequestMapping("/testRabbit")
+    public void test() {
+        BaobiaoOrder order = new BaobiaoOrder(1, "asjdfj", null, 1, new Date(), BaobiaoOrder.WAIT_BUYER_PAY);
+        rabbitTemplate.convertAndSend("pay-success-exchange","pay-success", order);
+    }
 }

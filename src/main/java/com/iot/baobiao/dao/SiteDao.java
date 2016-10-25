@@ -1,10 +1,13 @@
 package com.iot.baobiao.dao;
 
 import com.iot.baobiao.pojo.Site;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -31,6 +34,9 @@ public class SiteDao {
     private static final String INSERT = "INSERT INTO site(domain, start_url, sitename) VALUES(?, ?, ?)";
     private static final String SELECT_BY_IDS = "SELECT * FROM site WHERE id IN (:ids)";
     private static final String SELECT_ALL = "SELECT domain FROM site";
+    private static final String DELETE_SITE = "DELETE FROM site WHERE id = ?";
+
+    private static Log log = LogFactory.getLog(SiteDao.class);
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -69,7 +75,12 @@ public class SiteDao {
 
     @Cacheable("siteCache")
     public Site findSiteByDomain(String domain) {
-        return jdbcTemplate.queryForObject(SELECT_BY_DOMAIN, new SiteRowMapper(), domain);
+        try {
+            return jdbcTemplate.queryForObject(SELECT_BY_DOMAIN, new SiteRowMapper(), domain);
+        } catch (EmptyResultDataAccessException e) {
+            log.info("没有找到域名为" + domain + "的网站！");
+            return null;
+        }
     }
 
     @CachePut(value = "siteCache", key = "#result.id")
@@ -87,6 +98,11 @@ public class SiteDao {
         }, key);
         site.setId(key.getKey().intValue());
         return site;
+    }
+
+    @CacheEvict("siteCache")
+    public void deleteSite(int site_id) {
+        jdbcTemplate.update(DELETE_SITE, site_id);
     }
 
     public List<String> findAllSite() {

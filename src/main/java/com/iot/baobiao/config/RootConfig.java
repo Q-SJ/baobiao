@@ -1,20 +1,31 @@
 package com.iot.baobiao.config;
 
+import com.iot.baobiao.rabbitmq.PaySuccessReceiver;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.core.BindingBuilder;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
+import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
+import org.springframework.amqp.support.converter.JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.*;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 import com.p6spy.engine.spy.P6DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 
@@ -23,13 +34,14 @@ import javax.sql.DataSource;
  */
 
 @Configuration
+@Import({RabbitMQConfig.class, WebSocketConfig.class})
 @EnableCaching
 @EnableTransactionManagement
 @PropertySource("classpath:db.properties")
 @ComponentScan(basePackages = {"com.iot.baobiao.dao", "com.iot.baobiao.service"})
 public class RootConfig {
 
-    @Bean
+    @Bean   //配置此Bean是为了使用属性占位符来注入值
     public PropertySourcesPlaceholderConfigurer propertyConfigInDev() {
         return new PropertySourcesPlaceholderConfigurer();
     }
@@ -53,10 +65,15 @@ public class RootConfig {
         return dataSource;
     }
 
+//    @Bean
+//    public P6DataSource dataSource() {
+//        P6DataSource dataSource = new P6DataSource(dataSourceTarget());
+//        return dataSource;
+//    }
+
     @Bean
-    public P6DataSource dataSource() {
-        P6DataSource dataSource = new P6DataSource(dataSourceTarget());
-        return dataSource;
+    public DataSource dataSource() {
+        return dataSourceTarget();
     }
 
     @Bean

@@ -9,6 +9,7 @@ import com.iot.baobiao.pojo.UserSite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ import java.util.Map;
  */
 
 @Service
+@Transactional
 public class ManageSiteService {
 
     @Autowired
@@ -92,5 +94,30 @@ public class ManageSiteService {
     //返回数据库中所有的Domain List，以便客户端进行自动补齐
     public List<String> queryDomainList() {
         return siteDao.findAllSite();
+    }
+
+    public String deleteSiteByDomain(String domain) {
+        Site site = siteDao.findSiteByDomain(domain);
+        if (site == null) {
+            return "没有此网站！";
+        }
+        int siteid = site.getId();
+        List<Integer> useridList = userSiteDao.findUserBySite(siteid);
+        userSiteDao.deleteBySite(siteid);
+        for (int userid : useridList) {
+            userDao.deleteSite(userid, siteid);
+        }
+        siteDao.deleteSite(siteid);
+        return "ok";
+    }
+
+    public String deleteSiteBySiteid(int siteid) {
+        List<Integer> useridList = userSiteDao.findUserBySite(siteid);
+        userSiteDao.deleteBySite(siteid);
+        for (int userid : useridList) {
+            userDao.deleteSite(userid, siteid);
+        }
+        siteDao.deleteSite(siteid);
+        return "ok";
     }
 }

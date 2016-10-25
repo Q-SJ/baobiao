@@ -24,6 +24,8 @@ public class UserSiteDao {
     private static final String INSERT = "INSERT INTO user_site(user_id, site_id, sitename, start_url) VALUES(?, ?, ?, ?)";
     private static final String DELETE = "DELETE FROM user_site WHERE user_id = ? AND site_id = ?";
     private static final String SELECT_BY_USER = "SELECT * FROM user_site WHERE user_id = ? ORDER BY site_id ASC";
+    private static final String DELETE_BY_SITE = "DELETE FROM user_site WHERE site_id = ?";
+    private static final String SELECT_USER_BY_SITE = "SELECT user_id FROM user_site WHERE site_id = ?";
 
     private static final class UserSiteRowMapper implements RowMapper<UserSite> {
 
@@ -49,5 +51,13 @@ public class UserSiteDao {
 
     public List<UserSite> findByUser(int user_id) {
         return jdbcTemplate.query(SELECT_BY_USER, new Object[]{user_id}, new UserSiteRowMapper());
+    }
+
+    public void deleteBySite(int site_id) {
+        jdbcTemplate.update(DELETE_BY_SITE, site_id);
+    }
+
+    public List<Integer> findUserBySite(int site_id) {
+        return jdbcTemplate.queryForList(SELECT_USER_BY_SITE,new Object[]{site_id}, Integer.class);
     }
 }
