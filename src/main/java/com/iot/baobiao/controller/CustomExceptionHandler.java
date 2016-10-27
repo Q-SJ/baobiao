@@ -31,7 +31,6 @@ public class CustomExceptionHandler {
     }
 
     @ExceptionHandler(SiteNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> emptySiteHandler() {
         Map<String, String> map = new HashMap<String, String>();
         map.put("status", "error");
@@ -47,7 +46,6 @@ public class CustomExceptionHandler {
         return map;
     }
 
-    @ExceptionHandler(NoDataException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> emptyDataHandler() {
         Map<String, String> map = new HashMap<String, String>();

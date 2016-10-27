@@ -1,9 +1,11 @@
 package com.iot.baobiao.controller;
 
+import com.iot.baobiao.exception.SiteNotFoundException;
 import com.iot.baobiao.pojo.SelfSite;
 import com.iot.baobiao.pojo.Site;
 import com.iot.baobiao.service.DataService;
 import com.iot.baobiao.service.ManageSiteService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,6 +84,9 @@ public class SiteController {
         Map<String, List<SelfSite>> map = new HashMap<String, List<SelfSite>>();
 
         String ids = manageSiteService.queryUserSiteIDS(user_id);
+        if (StringUtils.isBlank(ids)) {
+            throw new SiteNotFoundException();
+        }
         List<String> wordList = null;
         if (words != null) {
             wordList = Arrays.asList(words.split(","));

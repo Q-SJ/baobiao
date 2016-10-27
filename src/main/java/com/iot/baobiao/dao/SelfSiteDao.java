@@ -1,6 +1,7 @@
 package com.iot.baobiao.dao;
 
 import com.iot.baobiao.pojo.SelfSite;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,6 +31,11 @@ public class SelfSiteDao {
     }
 
     private List<Integer> stringToIntList(String ids) {
+        if (StringUtils.isBlank(ids)) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add(0);
+            return list;
+        }
         List<String> sitesID = Arrays.asList(ids.split(",", 0));
         List<Integer> idList = new ArrayList<Integer>();
         for (String siteID : sitesID) {

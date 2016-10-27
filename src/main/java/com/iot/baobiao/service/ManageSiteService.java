@@ -84,11 +84,7 @@ public class ManageSiteService {
 
     //查询用户的自选网站，返回一个网站的id串以便查找数据
     public String queryUserSiteIDS(int user_id) {
-        String siteids = userDao.findSiteByUserID(user_id);
-        if (siteids == null || siteids.equals("")) {
-            throw new SiteNotFoundException();
-        }
-        return siteids;
+        return userDao.findSiteByUserID(user_id);
     }
 
     //返回数据库中所有的Domain List，以便客户端进行自动补齐

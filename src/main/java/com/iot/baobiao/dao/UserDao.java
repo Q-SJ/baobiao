@@ -5,6 +5,7 @@ import com.iot.baobiao.pojo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -69,7 +70,13 @@ public class UserDao {
 
     @Cacheable("userCache")
     public String findSiteByUserID(final int id) {
-        return jdbcTemplate.queryForObject(SELECT_SITE_BY_USERID, String.class, id);
+        String str;
+        try {
+            str = jdbcTemplate.queryForObject(SELECT_SITE_BY_USERID, String.class, id);
+        } catch (EmptyResultDataAccessException e) {
+            str = "";
+        }
+        return str;
     }
 
     //修改用户的关键字
